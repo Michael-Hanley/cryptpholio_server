@@ -7,18 +7,16 @@ router.use('/', function(req, res , next) {
     
     next();
 });
-// router.get('/', function(req, res, next) {
-//     user.all(function (values, err) {
-//         if (err) throw err;
-//         res.send(values);  
-//     })
-//     next();
-// });
 router.get('/', function(req, res) {
+    user.allUsers(function(values, err) {
+        if (err) throw err;
+        res.send(values); 
+    });
+});
+router.get('/single', function(req, res) {
     user.singleUser(1, function(values, err) {
         if (err) throw err;
         res.send(values); 
     });
 });
-
 module.exports = router;
