@@ -14,7 +14,7 @@ router.get('/', function(req, res) {
     });
 });
 router.get('/single', function(req, res) {
-    user.singleUser(1, function(values, err) {
+    user.singleUser('jimmy', function(values, err) {
         if (err) throw err;
         res.send(values); 
     });

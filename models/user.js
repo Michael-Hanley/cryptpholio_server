@@ -8,8 +8,8 @@ exports.allUsers = function(next) {
         next(result);
     });
 };
-exports.singleUser = function(userId, next) {
-    db.query('SELECT * FROM people WHERE id = ?', userId, function(err, result) {
+exports.singleUser = function(userName, next) {
+    db.query('SELECT * FROM people WHERE name = ?', userName, function(err, result) {
         if (err) throw err;
         next(result);
     });

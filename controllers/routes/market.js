@@ -9,20 +9,16 @@ const url =
   var connection = mysql.createConnection({
       host:'localhost',
       user:'root',
-      password:'********',
+      password:'*******',
       database:'cryptpholio'
   });
 
 router.use('/', function(req, res, next) {
-    connection.connect(function(err) {
-        if (err) throw err
-        console.log('You are now connected...')
-        connection.query('select * from coin_prices', function (err, result) {
-                if (err) throw err;
-                req.app.locals.body = result;
-                next();
-            });
-    });
+    connection.query('select * from coin_prices', function (err, result) {
+            if (err) throw err;
+            req.app.locals.body = result;
+            next();
+        });
     console.log('MARKET ROUTE HIT!');
 });
 router.get('/', function(req, res) {
