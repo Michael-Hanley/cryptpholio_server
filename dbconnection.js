@@ -1,12 +1,17 @@
 var mysql = require('mysql');
 
-var connection = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'',
-    database:'cryptpholio'
-});
 
+var connectionInfo = 
+
+getConnectionInfo = function getConnectionInfo() {
+    return {
+        host:'localhost',
+        user:'root',
+        password:'',
+        database:'cryptpholio'
+    };
+}
+var connection = mysql.createConnection(getConnectionInfo());
 
 connection.query('CREATE TABLE IF NOT EXISTS coin_prices('
     + 'id INT NOT NULL AUTO_INCREMENT,'
@@ -26,5 +31,6 @@ connection.query('CREATE TABLE IF NOT EXISTS coin_prices('
     +  ')', function (err) {
         if (err) throw err;
     });
-
-module.exports = connection;
+// module.exports = connectionInfo;
+module.exports.connection = connection
+module.exports.getConnectionInfo = getConnectionInfo;

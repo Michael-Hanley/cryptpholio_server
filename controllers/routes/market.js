@@ -1,17 +1,13 @@
 var express = require('express');
 var router = express.Router();
 const https = require("https");
-const url =
-  "https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR";
+const url = "https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR";
+var mysql = require('mysql');
 
-  var mysql = require('mysql');
+const dbconnection = require('../../dbconnection');
+const connectionInfo = dbconnection.getConnectionInfo();
+var connection = mysql.createConnection(connectionInfo);
 
-  var connection = mysql.createConnection({
-      host:'localhost',
-      user:'root',
-      password:'',
-      database:'cryptpholio'
-  });
 
 router.use('/', function(req, res, next) {
     connection.query('select * from coin_prices', function (err, result) {

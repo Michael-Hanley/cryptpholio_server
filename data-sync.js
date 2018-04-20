@@ -1,18 +1,15 @@
 const https = require("https");
 var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'',
-    database:'cryptpholio'
-});
+const dbconnection = require('./dbconnection');
+const connectionInfo = dbconnection.getConnectionInfo();
+var connection = mysql.createConnection(connectionInfo);
 
 var fullCoinList;
 var FullCoinListImages;
 getFullCoinList();
 
 function getFullCoinList() {
-    https.get('https://api.coinmarketcap.com/v1/ticker/?limit=1200', res => {
+    https.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500', res => {
         res.setEncoding("utf8");
         fullCoinList = "";
         res.on("data", data => {
