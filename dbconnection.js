@@ -27,10 +27,22 @@ connection.query('CREATE TABLE IF NOT EXISTS coin_prices('
     + 'image_url VARCHAR(255),'
     + 'available_supply BIGINT(32),'
     + 'total_supply BIGINT(32),'
-    + 'max_supply BIGINT(32)'
+    + 'max_supply BIGINT(32),'
+    + 'percent_change_1h DECIMAL(30, 6),'
+    + 'percent_change_24h DECIMAL(30, 6),'
+    + 'percent_change_7d DECIMAL(30, 6)'    
     +  ')', function (err) {
         if (err) throw err;
-    });
+});
+
+connection.query('CREATE TABLE IF NOT EXISTS global_market_cap('
+    + 'id INT NOT NULL AUTO_INCREMENT,'
+    + 'PRIMARY KEY(id),'    
+    + 'time_stamp BIGINT(32),'
+    + 'global_market_cap DECIMAL(30, 6)'    
+    +  ')', function (err) {
+        if (err) throw err;
+});
 // module.exports = connectionInfo;
 module.exports.connection = connection
 module.exports.getConnectionInfo = getConnectionInfo;

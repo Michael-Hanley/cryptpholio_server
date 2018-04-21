@@ -3,10 +3,29 @@ var mysql = require('mysql');
 const dbconnection = require('./dbconnection');
 const connectionInfo = dbconnection.getConnectionInfo();
 var connection = mysql.createConnection(connectionInfo);
+var fs = require('fs'),
+    request = require('request');
 
 var fullCoinList;
 var FullCoinListImages;
 getFullCoinList();
+calculateGlobalMarketCap();
+function calculateGlobalMarketCap() {
+    query = `select sum(market_cap_usd) as 'global_market_cap' from coin_prices;`;
+    connection.query(query, function (err, result) {
+        const queryResult = result[0].global_market_cap;
+        insertQuery = `INSERT INTO global_market_cap(
+            time_stamp, 
+            global_market_cap)
+        VALUES(
+            UNIX_TIMESTAMP(), 
+            ${queryResult});`;
+        connection.query(insertQuery, function(err, result) {
+            if (err) {
+            }; 
+        })
+    });
+}
 
 function getFullCoinList() {
     https.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500', res => {
@@ -53,6 +72,9 @@ coin = setInterval( function() {
                 usd_price = ${coin.price_usd}, 
                 rank = ${coin.rank},
                 market_cap_usd = ${coin.market_cap_usd},
+                percent_change_1h = ${coin.percent_change_1h},
+                percent_change_24h  = ${coin.percent_change_24h},
+                percent_change_7d  = ${coin.percent_change_7d},
                 image_url = "${ImageUrl}"
                 WHERE symbol = '${coin.symbol}';`;
         connection.query(coins, function (err, result) {
@@ -70,6 +92,9 @@ coin = setInterval( function() {
                     usd_price, 
                     rank,
                     market_cap_usd,
+                    percent_change_1h,
+                    percent_change_24h,
+                    percent_change_7d,
                     name,
                     image_url,
                     available_supply,
@@ -81,6 +106,9 @@ coin = setInterval( function() {
                     ${coin.price_usd}, 
                     ${coin.rank},
                     ${coin.market_cap_usd},
+                    ${coin.percent_change_1h},
+                    ${coin.percent_change_24h},
+                    ${coin.percent_change_7d},
                     "${coin.name}",
                     "${ImageUrl}",
                     ${coin.available_supply},
@@ -95,7 +123,22 @@ coin = setInterval( function() {
             });
         })
         getFullCoinList();
+        calculateGlobalMarketCap();
             // next();
-}, 10000);
+}, 60000);
+
+
+// var download = function(uri, filename, callback){
+//     request.head(uri, function(err, res, body){
+//       console.log('content-type:', res.headers['content-type']);
+//       console.log('content-length:', res.headers['content-length']);
+  
+//       request(uri).pipe(fs.createWriteStream('./coinIcons/'+filename)).on('close', callback);
+//     });
+// };
+
+// download('https://www.cryptocompare.com/media/19633/btc.png', 'google.png', function(){
+//   console.log('done');
+// });
 
 module.exports = coin;
