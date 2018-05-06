@@ -10,6 +10,7 @@ var fullCoinList;
 var FullCoinListImages;
 getFullCoinList();
 calculateGlobalMarketCap();
+
 function calculateGlobalMarketCap() {
     query = `select sum(market_cap_usd) as 'global_market_cap' from coin_prices;`;
     connection.query(query, function (err, result) {
@@ -17,12 +18,11 @@ function calculateGlobalMarketCap() {
         insertQuery = `INSERT INTO global_market_cap(
             time_stamp, 
             global_market_cap)
-        VALUES(
+            VALUES(
             UNIX_TIMESTAMP(), 
             ${queryResult});`;
         connection.query(insertQuery, function(err, result) {
-            if (err) {
-            }; 
+            if (err) throw err;
         })
     });
 }
@@ -67,6 +67,7 @@ coin = setInterval( function() {
         } else {
             var ImageUrl = 'womp womp'; 
         }
+
         const coins = `UPDATE coin_prices SET
                 btc_price = ${coin.price_btc}, 
                 usd_price = ${coin.price_usd}, 
@@ -77,15 +78,11 @@ coin = setInterval( function() {
                 percent_change_7d  = ${coin.percent_change_7d},
                 image_url = "${ImageUrl}"
                 WHERE symbol = '${coin.symbol}';`;
-        connection.query(coins, function (err, result) {
-            if (err) {
-                console.log(err);
-            }
-            + 'available_supply DECIMAL(30, 6),'
-            + 'total_supply DECIMAL(30, 6),'
-            + 'max_supply DECIMAL(30, 6)'
 
+        connection.query(coins, function (err, result) {
+            if (err) throw err;
             if(result != undefined && result.affectedRows === 0 && coin.symbol != '') {
+
                 query = `INSERT INTO coin_prices(
                     symbol, 
                     btc_price, 
@@ -114,10 +111,9 @@ coin = setInterval( function() {
                     ${coin.available_supply},
                     ${coin.total_supply},
                     ${coin.max_supply});`;
+
                 connection.query(query, function(err, result) {
-                    if (err) {
-                        console.log(err);
-                    }
+                    if (err) throw err;
                 })
             }
             });

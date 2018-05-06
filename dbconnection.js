@@ -5,7 +5,7 @@ var connectionInfo =
 
 getConnectionInfo = function getConnectionInfo() {
     return {
-        host:'localhost',
+        host:'127.0.0.1',
         user:'root',
         password:'',
         database:'cryptpholio'
@@ -43,6 +43,6 @@ connection.query('CREATE TABLE IF NOT EXISTS global_market_cap('
     +  ')', function (err) {
         if (err) throw err;
 });
-// module.exports = connectionInfo;
+
 module.exports.connection = connection
 module.exports.getConnectionInfo = getConnectionInfo;
