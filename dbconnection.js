@@ -1,13 +1,10 @@
 var mysql = require('mysql');
 
-
-var connectionInfo = 
-
 getConnectionInfo = function getConnectionInfo() {
     return {
         host:'127.0.0.1',
         user:'root',
-        password:'',
+        password:'Snfc123!',
         database:'cryptpholio'
     };
 }
