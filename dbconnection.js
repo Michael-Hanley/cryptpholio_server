@@ -3,7 +3,7 @@ var mysql = require('mysql');
 getConnectionInfo = function getConnectionInfo() {
     return {
         host:'127.0.0.1',
-        user:'root',
+        user:'Cryptpholio',
         password:'Snfc123!',
         database:'cryptpholio'
     };

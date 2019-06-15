@@ -7,8 +7,8 @@ var fs = require('fs');
 
 const CoinMarketCap = require('coinmarketcap-api')
 
-const apiKey = '6603a441-1bab-4abc-9326-9736c9d88ccc'
-const client = new CoinMarketCap(apiKey)
+// const apiKey = '6603a441-1bab-4abc-9326-9736c9d88ccc'
+// const client = new CoinMarketCap(apiKey)
 
 
 var fullCoinList;
@@ -19,6 +19,7 @@ calculateGlobalMarketCap();
 function calculateGlobalMarketCap() {
     query = `select sum(market_cap_usd) as 'global_market_cap' from coin_prices;`;
     connection.query(query, function (err, result) {
+        console.log(result);
         const queryResult = result[0].global_market_cap;
         insertQuery = `INSERT INTO global_market_cap(
             time_stamp, 
@@ -60,24 +61,24 @@ function getFullCoinList() {
     //         fullCoinList = JSON.parse(fullCoinList);
     //     })
     // })
-    client.getTickers({limit: 2000})
-        .then(res => {
-            let coins = res;
-            // coins.setEncoding("utf8");
-            console.log(coins);
-        })
-        .catch(console.error)
+    // client.getTickers({limit: 2000})
+    //     .then(res => {
+    //         let coins = res;
+    //         // coins.setEncoding("utf8");
+    //         // console.log(coins);
+    //     })
+    //     .catch(console.error)
     // client.getGlobal().then(console.log).catch(console.error)
-    // https.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500', res => {
-    //     res.setEncoding("utf8");
-    //     fullCoinList = "";
-    //     res.on("data", data => {
-    //         fullCoinList += data; 
-    //     })
-    //     res.on("end", () => {
-    //         fullCoinList = JSON.parse(fullCoinList);
-    //     })
-    // });
+    https.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500', res => {
+        res.setEncoding("utf8");
+        fullCoinList = "";
+        res.on("data", data => {
+            fullCoinList += data; 
+        })
+        res.on("end", () => {
+            fullCoinList = JSON.parse(fullCoinList);
+        })
+    });
 }
 getFullCoinListImages = https.get('https://min-api.cryptocompare.com/data/all/coinlist', res => {
     res.setEncoding("utf8");
@@ -91,22 +92,25 @@ getFullCoinListImages = https.get('https://min-api.cryptocompare.com/data/all/co
 })
 
 coin = setInterval( function() {
+    console.log(fullCoinList);
     fullCoinList.forEach(coin => {
-        if (FullCoinListImages.Data[coin.symbol] != undefined 
-            && FullCoinListImages.Data[coin.symbol].ImageUrl != undefined
-            && coin.symbol != 'MIOTA' && coin.symbol != 'NANO') {
-            var ImageUrl = FullCoinListImages.Data[coin.symbol].ImageUrl;
-        } else if (coin.symbol === 'MIOTA'){
-            var ImageUrl = FullCoinListImages.Data['IOT'].ImageUrl;
-        } else if (coin.symbol === 'NANO') {
-            // var ImageUrl = FullCoinListImages.Data['XRB'].ImageUrl;            
-        }  else if (coin.symbol === 'ETHOS') {
-            var ImageUrl = FullCoinListImages.Data['BQX'].ImageUrl;            
-        }   else if (coin.symbol === 'SMT') {
-            var ImageUrl = FullCoinListImages.Data['SMT*'].ImageUrl;            
-        } else {
-            var ImageUrl = 'womp womp'; 
-        }
+        let ImageUrl = '';
+        ImageUrl = FullCoinListImages.Data[coin.symbol];
+        // if ( != undefined 
+        //     && FullCoinListImages.Data[coin.symbol].ImageUrl != undefined
+        //     && coin.symbol != 'MIOTA' && coin.symbol != 'NANO') {
+        //     var ImageUrl = FullCoinListImages.Data[coin.symbol].ImageUrl;
+        // } else if (coin.symbol === 'MIOTA'){
+        //     var ImageUrl = FullCoinListImages.Data['IOT'].ImageUrl;
+        // } else if (coin.symbol === 'NANO') {
+        //     // var ImageUrl = FullCoinListImages.Data['XRB'].ImageUrl;            
+        // }  else if (coin.symbol === 'ETHOS') {
+        //     var ImageUrl = FullCoinListImages.Data['BQX'].ImageUrl;            
+        // }   else if (coin.symbol === 'SMT') {
+        //     var ImageUrl = FullCoinListImages.Data['SMT*'].ImageUrl;            
+        // } else {
+        //     var ImageUrl = 'womp womp'; 
+        // }
 
         const coins = `UPDATE coin_prices SET
                 btc_price = ${coin.price_btc}, 
@@ -116,7 +120,7 @@ coin = setInterval( function() {
                 percent_change_1h = ${coin.percent_change_1h},
                 percent_change_24h  = ${coin.percent_change_24h},
                 percent_change_7d  = ${coin.percent_change_7d},
-                image_url = "${ImageUrl}"
+                image_url = "${ImageUrl != undefined ? ImageUrl : ''}"
                 WHERE symbol = '${coin.symbol}';`;
 
         connection.query(coins, function (err, result) {
@@ -158,10 +162,11 @@ coin = setInterval( function() {
             }
             });
         })
-        getFullCoinList();
+        console.log('teeest');
+        // getFullCoinList();
         calculateGlobalMarketCap();
             // next();
-}, 60000);
+}, 6000);
 
 
 // var download = function(uri, filename, callback){
