@@ -5,12 +5,6 @@ const connectionInfo = dbconnection.getConnectionInfo();
 var connection = mysql.createConnection(connectionInfo);
 var fs = require('fs');
 
-const CoinMarketCap = require('coinmarketcap-api')
-
-// const apiKey = '6603a441-1bab-4abc-9326-9736c9d88ccc'
-// const client = new CoinMarketCap(apiKey)
-
-
 var fullCoinList;
 var FullCoinListImages;
 getFullCoinList();
@@ -34,44 +28,9 @@ function calculateGlobalMarketCap() {
 }
 
 function getFullCoinList() {
-    // var options = {
-    //     host: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?sort=market_cap&start=0&limit=10&cryptocurrency_type=tokens&convert=USD,BTC',
-    //     method: 'GET',
-    //     headers: {
-    //         'X-CMC_PRO_API_KEY': '6603a441-1bab-4abc-9326-9736c9d88ccc'
-    //     }
-    // };
-    // const options = {
-    //     method: 'GET',
-    //     url: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
-    //     headers: {
-    //       'X-CMC_PRO_API_KEY': '6603a441-1bab-4abc-9326-9736c9d88ccc'
-    //     },
-    //     json: true,
-    //     gzip: true
-    // };
-    // https.get(options, res => {
-    //     res.setEncoding("utf8");
-    //     console.log(res);
-    //     res.on("data", data => {
-    //         // fullCoinList += data;
-    //         console.log(data); 
-    //     })
-    //     res.on("end", () => {
-    //         fullCoinList = JSON.parse(fullCoinList);
-    //     })
-    // })
-    // client.getTickers({limit: 2000})
-    //     .then(res => {
-    //         let coins = res;
-    //         // coins.setEncoding("utf8");
-    //         // console.log(coins);
-    //     })
-    //     .catch(console.error)
-    // client.getGlobal().then(console.log).catch(console.error)
     https.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500', res => {
         res.setEncoding("utf8");
-        fullCoinList = "";
+        fullCoinList = [];
         res.on("data", data => {
             fullCoinList += data; 
         })
@@ -94,28 +53,17 @@ getFullCoinListImages = https.get('https://min-api.cryptocompare.com/data/all/co
 coin = setInterval( function() {
     console.log(fullCoinList);
     fullCoinList.forEach(coin => {
-        let ImageUrl = '';
-        ImageUrl = FullCoinListImages.Data[coin.symbol];
-        // if ( != undefined 
-        //     && FullCoinListImages.Data[coin.symbol].ImageUrl != undefined
-        //     && coin.symbol != 'MIOTA' && coin.symbol != 'NANO') {
-        //     var ImageUrl = FullCoinListImages.Data[coin.symbol].ImageUrl;
-        // } else if (coin.symbol === 'MIOTA'){
-        //     var ImageUrl = FullCoinListImages.Data['IOT'].ImageUrl;
-        // } else if (coin.symbol === 'NANO') {
-        //     // var ImageUrl = FullCoinListImages.Data['XRB'].ImageUrl;            
-        // }  else if (coin.symbol === 'ETHOS') {
-        //     var ImageUrl = FullCoinListImages.Data['BQX'].ImageUrl;            
-        // }   else if (coin.symbol === 'SMT') {
-        //     var ImageUrl = FullCoinListImages.Data['SMT*'].ImageUrl;            
-        // } else {
-        //     var ImageUrl = 'womp womp'; 
-        // }
+        if (FullCoinListImages.Data[coin.symbol] != undefined 
+            && FullCoinListImages.Data[coin.symbol].ImageUrl != undefined ) {
+            var ImageUrl = FullCoinListImages.Data[coin.symbol].ImageUrl;
+            } else {
+            var ImageUrl = 'womp womp'; 
+        }
 
         const coins = `UPDATE coin_prices SET
                 btc_price = ${coin.price_btc}, 
                 usd_price = ${coin.price_usd}, 
-                rank = ${coin.rank},
+                coin_rank = ${coin.rank},
                 market_cap_usd = ${coin.market_cap_usd},
                 percent_change_1h = ${coin.percent_change_1h},
                 percent_change_24h  = ${coin.percent_change_24h},
@@ -131,7 +79,7 @@ coin = setInterval( function() {
                     symbol, 
                     btc_price, 
                     usd_price, 
-                    rank,
+                    coin_rank,
                     market_cap_usd,
                     percent_change_1h,
                     percent_change_24h,
@@ -167,19 +115,5 @@ coin = setInterval( function() {
         calculateGlobalMarketCap();
             // next();
 }, 6000);
-
-
-// var download = function(uri, filename, callback){
-//     request.head(uri, function(err, res, body){
-//       console.log('content-type:', res.headers['content-type']);
-//       console.log('content-length:', res.headers['content-length']);
-  
-//       request(uri).pipe(fs.createWriteStream('./coinIcons/'+filename)).on('close', callback);
-//     });
-// };
-
-// download('https://www.cryptocompare.com/media/19633/btc.png', 'google.png', function(){
-//   console.log('done');
-// });
 
 module.exports = coin;

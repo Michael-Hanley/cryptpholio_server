@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const cors_middleware = require('../../middlewares/cors-middleware');
-const https = require("https");
-const url = "https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR";
 var mysql = require('mysql');
 
-const dbconnection = require('../../dbconnection');
+const dbconnection = require('../../config/dbconnection');
 const connectionInfo = dbconnection.getConnectionInfo();
 var connection = mysql.createConnection(connectionInfo);
 
