@@ -1,4 +1,4 @@
-var db = require('../dbconnection');
+var db = require('../config/dbconnection');
 var crypto = require('crypto');
 const mysql = require('mysql');
 
