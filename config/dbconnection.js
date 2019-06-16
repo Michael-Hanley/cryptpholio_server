@@ -8,7 +8,7 @@ getConnectionInfo = function getConnectionInfo() {
         database: process.env.DB_NAME
     };
 }
-var connection = mysql.createConnection(getConnectionInfo());   
+var connection = mysql.createConnection(getConnectionInfo());
 
 connection.query(
     `CREATE TABLE IF NOT EXISTS coin_prices(
@@ -29,18 +29,18 @@ connection.query(
         percent_change_1h DECIMAL(30, 6),
         percent_change_24h DECIMAL(30, 6),
         percent_change_7d DECIMAL(30, 6)
-        )`, function (err) {
-            if (err) throw err;
+    );`, function (err) {
+        if (err) throw err;
 });
 
 connection.query(
     `CREATE TABLE IF NOT EXISTS global_market_cap(
-        id INT NOT NULL AUTO_INCREMENT
-        PRIMARY KEY(id)  
-        time_stamp BIGINT(32)
-        global_market_cap DECIMAL(30, 6) 
-        )`, function (err) {
-            if (err) throw err;
+        id INT NOT NULL AUTO_INCREMENT,
+        PRIMARY KEY(id),
+        time_stamp BIGINT(32),
+        global_market_cap DECIMAL(30, 6)
+    );`, function (err) {
+        if (err) throw err;
 });
 
 module.exports.connection = connection
