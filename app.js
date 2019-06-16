@@ -1,9 +1,7 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const mysql = require('mysql');
-const dataSync = require('./data-sync');
-const db = require('./dbconnection');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
