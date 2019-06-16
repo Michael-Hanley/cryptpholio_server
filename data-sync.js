@@ -1,9 +1,8 @@
 const https = require("https");
 var mysql = require('mysql');
-const dbconnection = require('./dbconnection');
+const dbconnection = require('./config/dbconnection');
 const connectionInfo = dbconnection.getConnectionInfo();
 var connection = mysql.createConnection(connectionInfo);
-var fs = require('fs');
 
 var fullCoinList;
 var FullCoinListImages;
@@ -13,7 +12,6 @@ calculateGlobalMarketCap();
 function calculateGlobalMarketCap() {
     query = `select sum(market_cap_usd) as 'global_market_cap' from coin_prices;`;
     connection.query(query, function (err, result) {
-        console.log(result);
         const queryResult = result[0].global_market_cap;
         insertQuery = `INSERT INTO global_market_cap(
             time_stamp, 
@@ -51,7 +49,6 @@ getFullCoinListImages = https.get('https://min-api.cryptocompare.com/data/all/co
 })
 
 coin = setInterval( function() {
-    console.log(fullCoinList);
     fullCoinList.forEach(coin => {
         if (FullCoinListImages.Data[coin.symbol] != undefined 
             && FullCoinListImages.Data[coin.symbol].ImageUrl != undefined ) {
@@ -110,10 +107,8 @@ coin = setInterval( function() {
             }
             });
         })
-        console.log('teeest');
-        // getFullCoinList();
+        getFullCoinList();
         calculateGlobalMarketCap();
-            // next();
-}, 6000);
+}, 60000);
 
 module.exports = coin;
